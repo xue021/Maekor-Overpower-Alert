@@ -1,6 +1,0 @@
-## Interface: 50400
-## Title: ! Test Addon
-## Author: Maekor
-## Version: 0.1
-
-main.lua
