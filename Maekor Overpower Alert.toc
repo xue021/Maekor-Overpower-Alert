@@ -1,7 +1,0 @@
-## Interface: 50400
-## Title: Maekor Overpower Alert
-## Author: Maekor
-## Version: 0.1
-## SavedVariables: POSX, POSY
-
-main.lua
