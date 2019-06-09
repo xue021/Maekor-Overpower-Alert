@@ -2,6 +2,6 @@
 ## Title: Maekor Overpower Alert
 ## Author: Maekor
 ## Version: 0.1
-## SavedVariables: POSX, POSY, LOCKED
+## SavedVariables: POSX, POSY
 
 main.lua

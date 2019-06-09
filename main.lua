@@ -3,8 +3,11 @@
 local function initAlert()
 
 	--create base frame
-	AlertFrame = CreateFrame("Frame", "AlertFrame", UIParent)
+	AlertFrame = CreateFrame("Frame", nil, UIParent)
 	AlertFrame:SetSize(50, 50)
+
+	--init DummyFrame (used to move frame later)
+	DummyFrame = CreateFrame("Frame", nil, UIParent)
 	
 	-- set initial position on first log on
 	if POSX == nil or POSY == nil then
@@ -41,27 +44,60 @@ local function initAlert()
 	timerText:SetText("")
 
 
-	-- makes the alert frame moveable 
-	AlertFrame:SetMovable(true)
-	AlertFrame:EnableMouse(true)
-	AlertFrame:RegisterForDrag("LeftButton")
-	AlertFrame:SetScript("OnDragStart", AlertFrame.StartMoving)	
-	function setFramePos()
-		AlertFrame:StopMovingOrSizing()
-		_, _, _, POSX, POSY = AlertFrame:GetPoint() -- saves points POSX and POSY to saved variables
-		
-	end
-	AlertFrame:SetScript("OnDragStop",setFramePos)
+	
 
 	AlertFrame:Hide() -- hide the frame after done initializing
 
 end
 
 
-
-
-local function triggerAlert()
+local function unlock()
 	
+	
+	-- create dummy frame to position alert frame (initialized in init func)	
+	DummyFrame:Show()
+	DummyFrame:SetSize(50, 50)
+	DummyFrame:SetPoint("CENTER",POSX, POSY)
+	DummyFrame.texture = DummyFrame:CreateTexture()
+	DummyFrame.texture:SetAllPoints()
+	DummyFrame.texture:SetTexture("Interface\\Icons\\ability_meleedamage")
+
+
+	-- make DummyFrame moveable and save it's position
+	DummyFrame:SetMovable(true)
+	DummyFrame:EnableMouse(true)
+	DummyFrame:RegisterForDrag("LeftButton")
+	DummyFrame:SetScript("OnDragStart", DummyFrame.StartMoving)	
+	function setFramePos()
+		DummyFrame:StopMovingOrSizing()
+		_, _, _, POSX, POSY = DummyFrame:GetPoint() -- saves points POSX and POSY to saved variables
+		
+	end
+	DummyFrame:SetScript("OnDragStop",setFramePos)
+
+
+	-- create text to help user
+	moveText = DummyFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	moveText:SetPoint("TOP",0,12)
+	moveText:SetText("Move me!")
+
+	lockText = DummyFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	lockText:SetPoint("BOTTOM",0,-12)
+	lockText:SetText("'/moa lock' to lock")
+
+end
+
+local function lock()
+	--AlertFrame:SetMovable(false)
+	DummyFrame:EnableMouse(false)
+	DummyFrame:Hide()
+end
+
+-- event that is triggered after a dodge occurs
+local function triggerAlert()
+	lock()
+	AlertFrame:SetPoint("CENTER",POSX, POSY)
+
 	-- show the frame
 	AlertFrame:Show()
 	
@@ -93,34 +129,52 @@ local function triggerAlert()
 end
 
 
+
+
 -- combat log function
 local function OnEvent(self, event)
-	local eventSearchingFor = "DODGE" --or DODGE
+	local eventSearchingFor = "DODGE" -- name of envent to be searched for
 	arr = {}
-	arr[1], arr[2], arr[3], arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11],arr[12],arr[13],arr[14],arr[15],arr[16],arr[17],arr[18],arr[19],arr[20] = CombatLogGetCurrentEventInfo()
-	
+	arr[1], arr[2], arr[3], arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11],arr[12],arr[13],arr[14],arr[15],arr[16],arr[17],arr[18],arr[19],arr[20] = CombatLogGetCurrentEventInfo() 
 	
 	if arr[5] == UnitName("player") then
 	
 		-- below works (on swings and spell)
-		
 		if arr[12]==eventSearchingFor or arr[15] == eventSearchingFor then
-			--print(CombatLogGetCurrentEventInfo())
 			triggerAlert()
 			
 		end
-		
-		
-		
 	end
-	
-	
 end
 
 -- create a /command to test the alert
 SLASH_MOA_TEST1 = "/moa"
 SlashCmdList["MOA_TEST"] = function(msg)
-   triggerAlert()  
+	
+
+	if(msg=="test" or msg=="t") then
+		
+		triggerAlert()
+		
+	elseif(msg=="unlock" or msg=="u" or msg=="ul") then
+		print("Unlocking frame.")
+		unlock()
+	elseif(msg=="lock" or msg=="l") then
+		print("Locking frame.")
+		lock()
+	elseif(msg=="reset") then
+		print("Reseting position.")
+		POSX = 100
+		POSY = 0
+	else 
+		print("-- Maekor's Overpower Alert --")
+		print("Commands:")
+		print("   '/moa unlock' - unlocks frames to be moved")
+		print("   '/moa lock'   - locks frame in place")
+		print("   '/moa reset'  - reset the position of the alert frame")
+		print("   '/moa test'   - test the alert out")
+	end
+   	
 end 
 
 
