@@ -1,22 +1,14 @@
 
-
+local inTrigger = 0
 
 local function triggerAlert()
-	if 	AlertFrame1 then 
-		print(AlertFrame1:IsVisible())
-
-		if AlertFrame1:IsVisible() then
-			print("hiding old frame")
-			AlertFrame1:Hide()
-			AlertFrame1 = nil
-		end
-		
-	end
+	inTrigger = inTrigger + 1
+	
 	
 	
 	local AlertFrame = CreateFrame("Frame", "AlertFrame1", UIParent)
 	AlertFrame:SetSize(50, 50)
-	print(AlertFrame)
+	
 	
 	if POSX == nil or POSY == nil then
 		AlertFrame:SetPoint("CENTER",100, 0)
@@ -29,8 +21,9 @@ local function triggerAlert()
 	
 	AlertFrame.texture = AlertFrame:CreateTexture()
 	AlertFrame.texture:SetAllPoints()
-	AlertFrame.texture:SetColorTexture(0, 0.0, 0.0, 1)
+	AlertFrame.texture:SetColorTexture(0.0, 0.0, 0.0, 1)
 	--AlertFrame.texture:SetTexture("Interface\\Icons\\ability_meleedamage")
+	
 	
 
 	local AlertFrameIcon = CreateFrame("StatusBar", nil, AlertFrame)
@@ -53,21 +46,21 @@ local function triggerAlert()
 	end
 	AlertFrame:SetScript("OnDragStop",setFramePos)
 	
-
+	local AlertFrameFade = CreateFrame("StatusBar", nil, AlertFrameIcon)
+	AlertFrameFade:SetSize(50, 50)
+	AlertFrameFade:SetPoint("TOP", 0, 0)
+	AlertFrameFade.texture = AlertFrameFade:CreateTexture()
+	AlertFrameFade.texture:SetAllPoints(true)	
+	AlertFrameFade.texture:SetColorTexture(0.0, 0.0, 0.0, 0.5)
 	
-
+	
 
 
 	local timerText = AlertFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	timerText:SetPoint("CENTER",0,-25-5)
 	timerText:SetText("")
 
-	local AlertFrameFade = CreateFrame("StatusBar", nil, AlertFrame)
-	AlertFrameFade:SetSize(50, 50)
-	AlertFrameFade:SetPoint("TOP", 0, 0)
-	AlertFrameFade.texture = AlertFrameFade:CreateTexture()
-	AlertFrameFade.texture:SetAllPoints(true)	
-	AlertFrameFade.texture:SetColorTexture(0.8, 0.8, 0.8, 0.5)
+	
 	
 
 	-- timer and relevant time related updates to alert go here
@@ -84,13 +77,22 @@ local function triggerAlert()
 		AlertFrameFade:SetSize(50, 50*percDone)
 		timerText:SetText(string.format("%.1f", END - timer))
 		timer = timer + elapsed
-		
+		if(inTrigger > 1) then
+			AlertFrame:Hide()
+			
+			timer = START
+				
+			
+			
+			inTrigger = inTrigger -1
+		end
 		
 		-- when timer has reached the desired value, as defined by global END (seconds), restart it by setting it to 0, as defined by global START
 		if timer >= END then
 			timer = START
 			
 			AlertFrame:Hide()
+			inTrigger = inTrigger -1
 			
 			
 		end
@@ -113,7 +115,7 @@ local function OnEvent(self, event)
 		-- below works (on swings and spell)
 		
 		if arr[12]==eventSearchingFor or arr[15] == eventSearchingFor then
-			print(CombatLogGetCurrentEventInfo())
+			--print(CombatLogGetCurrentEventInfo())
 			triggerAlert()
 			
 		end
@@ -127,7 +129,7 @@ end
 
 SLASH_MOA_TEST1 = "/moa"
 SlashCmdList["MOA_TEST"] = function(msg)
-   print("Testing alert.")
+   --print("Testing alert.")
    triggerAlert()  
 end 
 
