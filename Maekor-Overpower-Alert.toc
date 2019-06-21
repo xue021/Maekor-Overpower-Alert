@@ -1,4 +1,4 @@
-## Interface: 50400
+## Interface: 11302
 ## Title: Maekor Overpower Alert
 ## Author: Maekor
 ## Version: 0.1
