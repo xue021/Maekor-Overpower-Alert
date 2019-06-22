@@ -104,7 +104,7 @@ local function triggerAlert()
 	
 	-- set a few useful variables
 	local START = 0
-	local END = 5
+	local END = 4
 	local timer = 0
 	AlertFrameFade:SetMinMaxValues(START, END)
 
