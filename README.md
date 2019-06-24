@@ -12,4 +12,4 @@ I do not have access to the beta - so I've been unable to squash all the bugs. B
 - <del> hide alert after using overpower</del> <b>done</b>
 - alert doesn't consider overpower cooldown (5sec)
 
-<img src="https://i.imgur.com/dPvpApb.png">
+<img src="https://i.imgur.com/3dyjehc.png">
