@@ -22,6 +22,7 @@ local function initAlert()
 	AlertFrame.texture:SetAllPoints()
 	AlertFrame.texture:SetColorTexture(0.0, 0.0, 0.0, 1)
 	
+	
 	-- create overpower icon frame
 	AlertFrameIcon = CreateFrame("StatusBar", nil, AlertFrame)
 	AlertFrameIcon:SetSize(50, 50)
@@ -29,6 +30,7 @@ local function initAlert()
 	AlertFrameIcon.texture = AlertFrameIcon:CreateTexture()
 	AlertFrameIcon.texture:SetAllPoints(true)	
 	AlertFrameIcon.texture:SetTexture("Interface\\Icons\\ability_meleedamage")
+	
 
 	-- this is the frame used to create the cooldown swipe / fade out animation
 	AlertFrameFade = CreateFrame("StatusBar", nil, AlertFrameIcon)
@@ -37,6 +39,8 @@ local function initAlert()
 	AlertFrameFade.texture = AlertFrameFade:CreateTexture()
 	AlertFrameFade.texture:SetAllPoints(true)	
 	AlertFrameFade.texture:SetColorTexture(0.0, 0.0, 0.0, 0.5)
+	
+
 
 	-- this is the text that shows the remaning time on the current overpower window
 	timerText = AlertFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
@@ -95,6 +99,8 @@ end
 
 -- event that is triggered after a dodge occurs
 local function triggerAlert()
+	
+
 	lock()
 	AlertFrame:SetPoint("CENTER",POSX, POSY)
 
@@ -132,19 +138,44 @@ end
 
 
 -- combat log function
+local eventSearchingFor = "DODGE" -- name of event to be searched for
+local arr = {}
 local function OnEvent(self, event)
-	local eventSearchingFor = "DODGE" -- name of envent to be searched for
-	arr = {}
-	arr[1], arr[2], arr[3], arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11],arr[12],arr[13],arr[14],arr[15],arr[16],arr[17],arr[18],arr[19],arr[20] = CombatLogGetCurrentEventInfo() 
-	
-	if arr[5] == UnitName("player") then
-	
-		-- below works (on swings and spell)
-		if arr[12]==eventSearchingFor or arr[15] == eventSearchingFor then
-			triggerAlert()
+	if(GetSpellInfo("Overpower")) then -- only load if player knows the spell
+		arr[1], arr[2], arr[3], arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11],arr[12],arr[13],arr[14],arr[15],arr[16],arr[17],arr[18],arr[19],arr[20] = CombatLogGetCurrentEventInfo() 
+		
+		-- read thru players combat log
+		if arr[5] == UnitName("player") then
 			
+			
+			
+
+			--this will hide alert after player overpowers successfully
+			if(arr[2]=="SPELL_CAST_SUCCESS" and arr[13]=="Overpower") then 
+				AlertFrame:Hide()
+				
+			end
+
+
+
+			-- below works (on swings and spell)
+			if arr[12]==eventSearchingFor or arr[15] == eventSearchingFor then
+				triggerAlert()
+				
+			end
+		end
+		
+		-- this code fades out overpower alert when overpower is still on cd
+		local start, duration, enabled, _ = GetSpellCooldown("Overpower")
+		local opCD = start + duration - GetTime()
+			if(opCD > 1.5) then
+			AlertFrame:SetAlpha(.2)
+		else
+			AlertFrame:SetAlpha(1)
 		end
 	end
+
+
 end
 
 -- create a /command to test the alert
