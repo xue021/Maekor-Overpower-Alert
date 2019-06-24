@@ -8,8 +8,8 @@ Type "/moa" in game for a list of commands. Available commands are "/moa unlock"
 I do not have access to the beta - so I've been unable to squash all the bugs. But it does work on classic client. You can see Zulp using it in this video: https://www.youtube.com/watch?v=JW_O-m21lUQ&feature=youtu.be&t=195 at 3:15.
 
 <b>TODO:</b>
-- hide alert when you change targets 
-- hide alert after using overpower
+- <del> hide alert when you change targets </del>
+- <del> hide alert after using overpower</del>
 - alert doesn't consider overpower cooldown (5sec)
 
 <img src="https://i.imgur.com/dPvpApb.png">
