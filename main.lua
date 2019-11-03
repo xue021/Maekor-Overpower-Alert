@@ -141,7 +141,7 @@ end
 local eventSearchingFor = "DODGE" -- name of event to be searched for
 local arr = {}
 local function OnEvent(self, event)
-	if(GetSpellInfo("Overpower")) then -- only load if player knows the spell
+	if(GetSpellInfo(NAME_OVERPOWER)) then -- only load if player knows the spell
 		arr[1], arr[2], arr[3], arr[4],arr[5],arr[6],arr[7],arr[8],arr[9],arr[10],arr[11],arr[12],arr[13],arr[14],arr[15],arr[16],arr[17],arr[18],arr[19],arr[20] = CombatLogGetCurrentEventInfo() 
 		
 		-- read thru players combat log
@@ -151,7 +151,7 @@ local function OnEvent(self, event)
 			
 
 			--this will hide alert after player overpowers successfully
-			if(arr[2]=="SPELL_CAST_SUCCESS" and arr[13]=="Overpower") then 
+			if(arr[2]=="SPELL_CAST_SUCCESS" and arr[13]==NAME_OVERPOWER) then 
 				AlertFrame:Hide()
 				
 			end
@@ -166,7 +166,7 @@ local function OnEvent(self, event)
 		end
 		
 		-- this code fades out overpower alert when overpower is still on cd
-		local start, duration, enabled, _ = GetSpellCooldown("Overpower")
+		local start, duration, enabled, _ = GetSpellCooldown(NAME_OVERPOWER)
 		local opCD = start + duration - GetTime()
 			if(opCD > 1.5) then
 			AlertFrame:SetAlpha(.2)
@@ -184,7 +184,6 @@ SlashCmdList["MOA_TEST"] = function(msg)
 	
 
 	if(msg=="test" or msg=="t") then
-		
 		triggerAlert()
 		
 	elseif(msg=="unlock" or msg=="u" or msg=="ul") then
@@ -215,7 +214,9 @@ local f = CreateFrame("Frame")
 f:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED", "player")
 f:SetScript("OnEvent", OnEvent)
 
+NAME_OVERPOWER = GetSpellInfo(11585)
 
-print("Maekor Overpower Alert loaded.")
+
 
 initAlert() -- initialize the alert frame
+print("Maekor Overpower Alert loaded.")
