@@ -3,54 +3,54 @@
 local function initAlert()
 
 	--create base frame
-	AlertFrame = CreateFrame("Frame", nil, UIParent)
-	AlertFrame:SetSize(50, 50)
+	MOAAlertFrame = CreateFrame("Frame", nil, UIParent)
+	MOAAlertFrame:SetSize(50, 50)
 
 	--init DummyFrame (used to move frame later)
 	DummyFrame = CreateFrame("Frame", nil, UIParent)
 	
 	-- set initial position on first log on
 	if POSX == nil or POSY == nil then
-		AlertFrame:SetPoint("CENTER",100, 0)
-		_, _, _, POSX, POSY = AlertFrame:GetPoint()		
+		MOAAlertFrame:SetPoint("CENTER",100, 0)
+		_, _, _, POSX, POSY = MOAAlertFrame:GetPoint()		
 	else -- if not first log in, load saved position from SavedVariables: POSX and POSY
-		AlertFrame:SetPoint("CENTER",POSX, POSY)
+		MOAAlertFrame:SetPoint("CENTER",POSX, POSY)
 	end
 	
 	-- the base alert frame is just a black square which will work as a background (makes the cooldown timer effect look better too)
-	AlertFrame.texture = AlertFrame:CreateTexture()
-	AlertFrame.texture:SetAllPoints()
-	AlertFrame.texture:SetColorTexture(0.0, 0.0, 0.0, 1)
+	MOAAlertFrame.texture = MOAAlertFrame:CreateTexture()
+	MOAAlertFrame.texture:SetAllPoints()
+	MOAAlertFrame.texture:SetColorTexture(0.0, 0.0, 0.0, 1)
 	
 	
 	-- create overpower icon frame
-	AlertFrameIcon = CreateFrame("StatusBar", nil, AlertFrame)
-	AlertFrameIcon:SetSize(50, 50)
-	AlertFrameIcon:SetPoint("TOP", 0, 0)
-	AlertFrameIcon.texture = AlertFrameIcon:CreateTexture()
-	AlertFrameIcon.texture:SetAllPoints(true)	
-	AlertFrameIcon.texture:SetTexture("Interface\\Icons\\ability_meleedamage")
+	MOAAlertFrameIcon = CreateFrame("StatusBar", nil, MOAAlertFrame)
+	MOAAlertFrameIcon:SetSize(50, 50)
+	MOAAlertFrameIcon:SetPoint("TOP", 0, 0)
+	MOAAlertFrameIcon.texture = MOAAlertFrameIcon:CreateTexture()
+	MOAAlertFrameIcon.texture:SetAllPoints(true)	
+	MOAAlertFrameIcon.texture:SetTexture("Interface\\Icons\\ability_meleedamage")
 	
 
 	-- this is the frame used to create the cooldown swipe / fade out animation
-	AlertFrameFade = CreateFrame("StatusBar", nil, AlertFrameIcon)
-	AlertFrameFade:SetSize(50, 50)
-	AlertFrameFade:SetPoint("TOP", 0, 0)
-	AlertFrameFade.texture = AlertFrameFade:CreateTexture()
-	AlertFrameFade.texture:SetAllPoints(true)	
-	AlertFrameFade.texture:SetColorTexture(0.0, 0.0, 0.0, 0.5)
+	MOAAlertFrameFade = CreateFrame("StatusBar", nil, MOAAlertFrameIcon)
+	MOAAlertFrameFade:SetSize(50, 50)
+	MOAAlertFrameFade:SetPoint("TOP", 0, 0)
+	MOAAlertFrameFade.texture = MOAAlertFrameFade:CreateTexture()
+	MOAAlertFrameFade.texture:SetAllPoints(true)	
+	MOAAlertFrameFade.texture:SetColorTexture(0.0, 0.0, 0.0, 0.5)
 	
 
 
 	-- this is the text that shows the remaning time on the current overpower window
-	timerText = AlertFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	timerText = MOAAlertFrame:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	timerText:SetPoint("CENTER",0,-25-5)
 	timerText:SetText("")
 
 
 	
 
-	AlertFrame:Hide() -- hide the frame after done initializing
+	MOAAlertFrame:Hide() -- hide the frame after done initializing
 
 end
 
@@ -92,7 +92,7 @@ local function unlock()
 end
 
 local function lock()
-	--AlertFrame:SetMovable(false)
+	--MOAAlertFrame:SetMovable(false)
 	DummyFrame:EnableMouse(false)
 	DummyFrame:Hide()
 end
@@ -102,23 +102,23 @@ local function triggerAlert()
 	
 
 	lock()
-	AlertFrame:SetPoint("CENTER",POSX, POSY)
+	MOAAlertFrame:SetPoint("CENTER",POSX, POSY)
 
 	-- show the frame
-	AlertFrame:Show()
+	MOAAlertFrame:Show()
 	
 	
 	-- set a few useful variables
 	local START = 0
 	local END = 5
 	local timer = 0
-	AlertFrameFade:SetMinMaxValues(START, END)
+	MOAAlertFrameFade:SetMinMaxValues(START, END)
 
 	--this is the script for the timer
-	AlertFrameFade:SetScript("OnUpdate", function(self, elapsed)
+	MOAAlertFrameFade:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed -- add the amount of time elapsed since last update to current timer
 		percDone = timer / END -- get percentage of total time elapsed 
-		AlertFrameFade:SetSize(50, 50*percDone) -- update the fade frame to reflect time remaining
+		MOAAlertFrameFade:SetSize(50, 50*percDone) -- update the fade frame to reflect time remaining
 		timerText:SetText(string.format("%.1f", END - timer))--update the timer below the alert
 		
 	
@@ -126,7 +126,7 @@ local function triggerAlert()
 		-- when timer has reached the desired value, as defined by END (seconds), restart it by setting it to 0, as defined by START
 		if timer >= END then
 			timer = START -- reset timer to 0			
-			AlertFrame:Hide() -- hide the frame since completed
+			MOAAlertFrame:Hide() -- hide the frame since completed
 			
 			
 		end
@@ -152,7 +152,7 @@ local function OnEvent(self, event)
 
 			--this will hide alert after player overpowers successfully
 			if(arr[2]=="SPELL_CAST_SUCCESS" and arr[13]==NAME_OVERPOWER) then 
-				AlertFrame:Hide()
+				MOAAlertFrame:Hide()
 				
 			end
 
@@ -169,9 +169,9 @@ local function OnEvent(self, event)
 		local start, duration, enabled, _ = GetSpellCooldown(NAME_OVERPOWER)
 		local opCD = start + duration - GetTime()
 			if(opCD > 1.5) then
-			AlertFrame:SetAlpha(.2)
+			MOAAlertFrame:SetAlpha(.2)
 		else
-			AlertFrame:SetAlpha(1)
+			MOAAlertFrame:SetAlpha(1)
 		end
 	end
 
